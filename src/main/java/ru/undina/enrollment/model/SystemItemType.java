@@ -1,4 +1,4 @@
-package ru.undina.enrollment.schemas;
+package ru.undina.enrollment.model;
 
 public enum SystemItemType {
     FILE,

@@ -3,6 +3,7 @@ package ru.undina.enrollment.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.undina.enrollment.dto.SystemItemDto;
 import ru.undina.enrollment.dto.SystemItemImport;
 import ru.undina.enrollment.exception.*;
 import ru.undina.enrollment.mapper.SystemItemMapper;
@@ -37,7 +38,7 @@ public class EnrollmentService {
 //                .map(SystemItemImport::getId)
 //                .collect(Collectors.toSet());
 //        if (idSet.size() != items.size()) {
-//            throw new DoubleIdException("Double id in the list");
+//            throw new BadRequestException("Double id in the list");
 //        }
         for (SystemItemImport itemImport : items) {
             SystemItem systemItem = SystemItemMapper.toSystemItem(itemImport);
@@ -80,10 +81,10 @@ public class EnrollmentService {
         repository.delete(item);
     }
 
-    public SystemItem getById(String  id) {
-        UUID idUuid = UUID.fromString(id);
+    public SystemItemDto getById(String  id) {
 
-        return repository.findById(idUuid).orElseThrow(() -> new ItemNotFoundException("SystemItem not found"));
+        return SystemItemMapper.toSystemItemDto(repository.findById(id)
+                .orElseThrow(() -> new ItemNotFoundException("SystemItem not found")));
     }
 
 

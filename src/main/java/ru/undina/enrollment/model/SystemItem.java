@@ -26,7 +26,7 @@ import java.util.UUID;
 public class SystemItem implements Serializable {
     @Id
     @Column(name = "id", nullable = false)
-    private UUID id;
+    private String id;
 
     @NotNull
     @Column(name = "date", nullable = false)
@@ -34,7 +34,7 @@ public class SystemItem implements Serializable {
 
 
     @Column(name = "parent_id", nullable = false)
-    private UUID parentId;
+    private String parentId;
 
 
     @Column(name = "url")

@@ -8,5 +8,5 @@ import java.util.UUID;
 
 public interface EnrollmentRepository extends JpaRepository<SystemItem, String> {
 
-    Optional<SystemItem> findById(UUID s);
+
 }

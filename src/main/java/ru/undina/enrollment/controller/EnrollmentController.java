@@ -3,9 +3,9 @@ package ru.undina.enrollment.controller;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.undina.enrollment.exception.DoubleIdException;
+import ru.undina.enrollment.dto.SystemItemDto;
+import ru.undina.enrollment.exception.BadRequestException;
 import ru.undina.enrollment.exception.ItemNotFoundException;
 import ru.undina.enrollment.model.SystemItem;
 import ru.undina.enrollment.model.SystemItemHistoryResponse;
@@ -13,7 +13,6 @@ import ru.undina.enrollment.model.SystemItemImportRequest;
 import ru.undina.enrollment.service.EnrollmentService;
 import ru.undina.enrollment.model.Error;
 import javax.validation.Valid;
-import java.time.LocalDateTime;
 import java.util.Date;
 
 @RestController
@@ -40,7 +39,7 @@ public class EnrollmentController {
     }
 
     @GetMapping(value = "/nodes/{id}")
-    public SystemItem getSystemItem(@PathVariable String id){
+    public SystemItemDto getSystemItemDto(@PathVariable String id){
         return service.getById(id);
     }
 
@@ -58,8 +57,8 @@ public class EnrollmentController {
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(DoubleIdException.class)
-    public Error handleBadRequestException(DoubleIdException e){
+    @ExceptionHandler(BadRequestException.class)
+    public Error handleBadRequestException(BadRequestException e){
         return new Error( 404, e.getMessage());
     }
 

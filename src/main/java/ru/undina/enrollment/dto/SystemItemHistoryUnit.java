@@ -18,11 +18,11 @@ import java.util.UUID;
 @AllArgsConstructor
 public class SystemItemHistoryUnit {
     @NotNull
-    private UUID id;
+    private String id;
 
     private String url;
 
-    private UUID parentId;
+    private String parentId;
 
     @NotNull
     private SystemItemType type;

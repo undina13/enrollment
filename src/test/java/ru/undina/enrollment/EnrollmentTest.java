@@ -13,6 +13,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import ru.undina.enrollment.controller.EnrollmentController;
 
+import java.util.List;
+
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static ru.undina.enrollment.EnrollmentTestData.*;
@@ -91,7 +93,7 @@ public class EnrollmentTest {
     @DirtiesContext
     void deleteOk() throws Exception {
         mockMvc.perform(
-                MockMvcRequestBuilders.delete("/delete/item1?date=2022-09-13T22:12:01.00Z")
+                MockMvcRequestBuilders.delete("/delete/item1?date=2022-09-13T22:12:01Z")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
 
@@ -104,8 +106,17 @@ public class EnrollmentTest {
     @Test
     void deleteNotFound() throws Exception {
         mockMvc.perform(
-                MockMvcRequestBuilders.delete("/delete/44item1?date=2022-09-13T22:12:01.00Z")
+                MockMvcRequestBuilders.delete("/delete/44item1?date=2022-09-13T22:12:01Z")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void getUpdates() throws Exception {
+        mockMvc.perform(
+                MockMvcRequestBuilders.get("/updates?date=2022-09-12T00:10:01Z")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().json(mapper.writeValueAsString(response1)));
     }
 }

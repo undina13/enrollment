@@ -1,7 +1,9 @@
 package ru.undina.enrollment;
 
 import ru.undina.enrollment.dto.SystemItemImport;
+import ru.undina.enrollment.mapper.SystemItemMapper;
 import ru.undina.enrollment.model.SystemItem;
+import ru.undina.enrollment.model.SystemItemHistoryResponse;
 import ru.undina.enrollment.model.SystemItemImportRequest;
 import ru.undina.enrollment.model.SystemItemType;
 
@@ -81,4 +83,6 @@ public class EnrollmentTestData {
             .date(LocalDateTime.parse("2022-09-11 00:12:01", DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
             .build();
 
+
+    public static SystemItemHistoryResponse response1 = new SystemItemHistoryResponse(List.of(SystemItemMapper.toSystemItemHistoryUnit(item3)));
 }

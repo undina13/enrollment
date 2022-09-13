@@ -7,7 +7,6 @@ import ru.undina.enrollment.model.SystemItemType;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-
 import java.util.List;
 
 public class EnrollmentTestData {
@@ -27,6 +26,8 @@ public class EnrollmentTestData {
             .id("item18976")
             .type(SystemItemType.FILE)
             .parentId("12345")
+            .url("some url")
+            .size(50)
             .build();
 
     public static SystemItemImport systemItemImport4 = SystemItemImport.builder()
@@ -36,22 +37,22 @@ public class EnrollmentTestData {
             .build();
 
     public static SystemItemImportRequest systemItemImportRequest1 = SystemItemImportRequest.builder()
-            .updateDate("2022-09-10T21:12:01.000Z")
+            .updateDate(LocalDateTime.of(2022, 9, 10, 21, 12, 1))
             .items(List.of(systemItemImport1, systemItemImport2))
             .build();
 
     public static SystemItemImportRequest systemItemImportRequest2 = SystemItemImportRequest.builder()
-            .updateDate("2022-09-10T21:13:01.000Z")
+            .updateDate(LocalDateTime.of(2022, 9, 10, 12, 13, 1))
             .items(List.of(systemItemImport3))
             .build();
 
     public static SystemItemImportRequest systemItemImportRequest3 = SystemItemImportRequest.builder()
-            .updateDate("2022-09-10T21:14:01.000Z")
+            .updateDate(LocalDateTime.of(2022, 9, 10, 21, 14, 1))
             .items(List.of(systemItemImport4))
             .build();
 
     public static SystemItemImportRequest systemItemImportRequest4 = SystemItemImportRequest.builder()
-            .updateDate("2022-09-10T21:14:01.000Z")
+            .updateDate(LocalDateTime.of(2022, 9, 10, 21, 14, 1))
             .items(List.of(systemItemImport4, systemItemImport4))
             .build();
 
@@ -61,7 +62,7 @@ public class EnrollmentTestData {
             .url("/file/url15")
             .type(SystemItemType.FILE)
             .size(100)
-            .date(LocalDateTime.parse("2022-09-10T22:12:01.000Z", DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")))
+            .date(LocalDateTime.parse("2022-09-10 22:12:01", DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
             .build();
 
     public static SystemItem item3 = SystemItem.builder()
@@ -70,14 +71,14 @@ public class EnrollmentTestData {
             .url("/file/url15h")
             .type(SystemItemType.FILE)
             .size(100)
-            .date(LocalDateTime.parse("2022-09-11T00:12:01.000Z", DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")))
+            .date(LocalDateTime.parse("2022-09-11 00:12:01", DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
             .build();
 
-    public static  SystemItem item1 = SystemItem.builder()
+    public static SystemItem item1 = SystemItem.builder()
             .id("item1")
             .type(SystemItemType.FOLDER)
             .children(List.of(item2, item3))
-            .date(LocalDateTime.parse("2022-09-11T00:12:01.000Z", DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")))
+            .date(LocalDateTime.parse("2022-09-11 00:12:01", DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
             .build();
 
 }

@@ -72,10 +72,10 @@ public class EnrollmentTest {
     @Test
     void getByIdOk() throws Exception {
         mockMvc.perform(
-                MockMvcRequestBuilders.get("/nodes/item1")
+                MockMvcRequestBuilders.get("/nodes/item2")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(content().json(mapper.writeValueAsString(item1)));
+                .andExpect(content().json(mapper.writeValueAsString(item2)));
     }
 
 
@@ -89,9 +89,9 @@ public class EnrollmentTest {
 
     @Test
     @DirtiesContext
-    void DeleteOk() throws Exception {
+    void deleteOk() throws Exception {
         mockMvc.perform(
-                MockMvcRequestBuilders.delete("/delete/item1?date=2022-09-13T22:12:01.000Z")
+                MockMvcRequestBuilders.delete("/delete/item1?date=2022-09-13T22:12:01.00Z")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
 
@@ -102,9 +102,9 @@ public class EnrollmentTest {
     }
 
     @Test
-    void DeleteNotFound() throws Exception {
+    void deleteNotFound() throws Exception {
         mockMvc.perform(
-                MockMvcRequestBuilders.delete("/delete/44item1?date=2022-09-13T22:12:01.000Z")
+                MockMvcRequestBuilders.delete("/delete/44item1?date=2022-09-13T22:12:01.00Z")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
     }

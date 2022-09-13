@@ -50,16 +50,10 @@ public class SystemItemMapper {
         else {
             List<SystemItem> children1 = systemItem.getChildren();
              children = children1.stream()
-                    .map(item -> SystemItemMapper.toSystemItemDto(item))
+                    .map(SystemItemMapper::toSystemItemDto)
                     .collect(Collectors.toList());
 
         }
-      // Timestamp date = Timestamp.valueOf(systemItem.getDate());
-      //  LocalDateTime dateTime = LocalDateTime.parse(systemItem.getDate());
-       // Date date = Date.from(Instant.parse(systemItem.getDate()));
-     //   String newDate = dateTime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
-
-
 
         return SystemItemDto.builder()
                 .id(systemItem.getId())

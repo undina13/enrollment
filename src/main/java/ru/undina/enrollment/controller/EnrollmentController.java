@@ -7,13 +7,12 @@ import org.springframework.web.bind.annotation.*;
 import ru.undina.enrollment.dto.SystemItemDto;
 import ru.undina.enrollment.exception.BadRequestException;
 import ru.undina.enrollment.exception.ItemNotFoundException;
-import ru.undina.enrollment.model.SystemItem;
+import ru.undina.enrollment.model.Error;
 import ru.undina.enrollment.model.SystemItemHistoryResponse;
 import ru.undina.enrollment.model.SystemItemImportRequest;
 import ru.undina.enrollment.service.EnrollmentService;
-import ru.undina.enrollment.model.Error;
+
 import javax.validation.Valid;
-import java.util.Date;
 
 @RestController
 @RequestMapping()
@@ -30,21 +29,21 @@ public class EnrollmentController {
     @PostMapping("/imports")
     public void imports(@RequestBody @Valid SystemItemImportRequest itemImportRequest) {
         log.info("create itemImportRequest");
-          service.imports(itemImportRequest);
+        service.imports(itemImportRequest);
     }
 
     @DeleteMapping("/delete/{id}")
-    public void delete(@PathVariable String id, @RequestParam String date){
+    public void delete(@PathVariable String id, @RequestParam String date) {
         service.delete(id, date);
     }
 
     @GetMapping(value = "/nodes/{id}")
-    public SystemItemDto getSystemItemDto(@PathVariable String id){
+    public SystemItemDto getSystemItemDto(@PathVariable String id) {
         return service.getById(id);
     }
 
     @GetMapping(value = "/updates")
-    public SystemItemHistoryResponse getUpdates(@RequestParam Date date){
+    public SystemItemHistoryResponse getUpdates(@RequestParam String date) {
         return service.getByUpdate(date);
     }
 
@@ -52,19 +51,19 @@ public class EnrollmentController {
     public SystemItemHistoryResponse getHistory(
             @PathVariable String id,
             @RequestParam(required = false) String dateStart,
-            @RequestParam(required = false) String dateEnd){
+            @RequestParam(required = false) String dateEnd) {
         return service.getHistory(id, dateStart, dateEnd);
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(BadRequestException.class)
-    public Error handleBadRequestException(BadRequestException e){
-        return new Error( 404, e.getMessage());
+    public Error handleBadRequestException(BadRequestException e) {
+        return new Error(404, e.getMessage());
     }
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(ItemNotFoundException.class)
-    public Error handleNotFoundException(ItemNotFoundException e){
-        return new Error(400,  e.getMessage());
+    public Error handleNotFoundException(ItemNotFoundException e) {
+        return new Error(400, e.getMessage());
     }
 }

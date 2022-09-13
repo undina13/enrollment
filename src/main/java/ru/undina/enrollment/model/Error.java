@@ -1,8 +1,10 @@
 package ru.undina.enrollment.model;
 
 import lombok.AllArgsConstructor;
+import lombok.Data;
 
-@AllArgsConstructor
+
+@Data
 public class Error {
     private final Integer code;
 

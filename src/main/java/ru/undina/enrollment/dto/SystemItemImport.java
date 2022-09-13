@@ -8,6 +8,7 @@ import ru.undina.enrollment.model.SystemItemType;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.NotNull;
+import java.util.UUID;
 
 @Data
 @Builder
@@ -15,12 +16,12 @@ import javax.validation.constraints.NotNull;
 @AllArgsConstructor
 public class SystemItemImport {
     @NotNull
-    private String id;
+    private UUID id;
 
     @Max(255)
     private String url;
 
-    private String parentId;
+    private UUID parentId;
 
     @NotNull
     private SystemItemType type;

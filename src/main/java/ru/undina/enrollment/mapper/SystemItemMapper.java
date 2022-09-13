@@ -5,7 +5,6 @@ import ru.undina.enrollment.dto.SystemItemHistoryUnit;
 import ru.undina.enrollment.dto.SystemItemImport;
 import ru.undina.enrollment.model.SystemItem;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 @UtilityClass
@@ -13,12 +12,10 @@ public class SystemItemMapper {
     public static SystemItem toSystemItem(SystemItemImport systemItemImport) {
         return SystemItem.builder()
                 .id(systemItemImport.getId())
-                .date(LocalDateTime.now())
                 .parentId(systemItemImport.getParentId())
                 .url(systemItemImport.getUrl())
                 .type(systemItemImport.getType())
                 .size(systemItemImport.getSize())
-                .children(new ArrayList<>())
                 .build();
     }
 

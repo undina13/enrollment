@@ -1,4 +1,4 @@
-
+DELETE FROM PUBLIC.ITEMS;
 
 INSERT INTO PUBLIC.ITEMS (id, date, parent_id, url, type, size)
 VALUES( 'item1', '2022-09-10T21:12:01.000Z', null, null, 'FOLDER', null);

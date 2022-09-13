@@ -21,12 +21,37 @@ public class EnrollmentTestData {
             .type(SystemItemType.FOLDER)
             .build();
 
+    public static SystemItemImport systemItemImport3 = SystemItemImport.builder()
+            .id("item18976")
+            .type(SystemItemType.FILE)
+            .parentId("12345")
+            .build();
+
+    public static SystemItemImport systemItemImport4 = SystemItemImport.builder()
+            .id("item123")
+            .type(SystemItemType.FOLDER)
+            .parentId("item2")
+            .build();
+
     public static SystemItemImportRequest systemItemImportRequest1 = SystemItemImportRequest.builder()
             .updateDate("2022-09-10T21:12:01.000Z")
             .items(List.of(systemItemImport1, systemItemImport2))
             .build();
 
+    public static SystemItemImportRequest systemItemImportRequest2 = SystemItemImportRequest.builder()
+            .updateDate("2022-09-10T21:13:01.000Z")
+            .items(List.of(systemItemImport3))
+            .build();
 
+    public static SystemItemImportRequest systemItemImportRequest3 = SystemItemImportRequest.builder()
+            .updateDate("2022-09-10T21:14:01.000Z")
+            .items(List.of(systemItemImport4))
+            .build();
+
+    public static SystemItemImportRequest systemItemImportRequest4 = SystemItemImportRequest.builder()
+            .updateDate("2022-09-10T21:14:01.000Z")
+            .items(List.of(systemItemImport4, systemItemImport4))
+            .build();
 
     public static SystemItem item2 = SystemItem.builder()
             .id("item2")

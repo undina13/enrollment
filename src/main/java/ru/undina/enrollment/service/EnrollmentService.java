@@ -34,59 +34,78 @@ public class EnrollmentService {
     public void imports(SystemItemImportRequest itemImportRequest) {
         String updateDate = itemImportRequest.getUpdateDate();
         List<SystemItemImport> items = itemImportRequest.getItems();
-//        Set<String> idSet = items.stream()
-//                .map(SystemItemImport::getId)
-//                .collect(Collectors.toSet());
-//        if (idSet.size() != items.size()) {
-//            throw new BadRequestException("Double id in the list");
-//        }
+        Set<String> idSet = items.stream()
+                .map(SystemItemImport::getId)
+                .collect(Collectors.toSet());
+        if (idSet.size() != items.size()) {
+            throw new BadRequestException("Validation Failed");
+        }
         for (SystemItemImport itemImport : items) {
             SystemItem systemItem = SystemItemMapper.toSystemItem(itemImport);
             systemItem.setDate(updateDate);
 
-//            if (systemItem.getParentId() != null) {
-//                SystemItem parent = repository.findById(systemItem.getParentId())
-//                        .orElseThrow(() -> new ItemNotFoundException("SystemItem not found"));
-//
-//                if (parent.getType().equals(SystemItemType.FILE)) {
-//                    throw new FileParentException("File can`t be a parent");
-//                }
-//            }
-//
-//            if ((systemItem.getType().equals(SystemItemType.FILE) &&
-//                    (systemItem.getSize() == null || systemItem.getSize() <= 0))
-//                    || ((systemItem.getType().equals(SystemItemType.FOLDER)) &&
-//                    (systemItem.getSize() == null || systemItem.getSize() >= 0))) {
-//                throw new SizeException("Wrong size in item");
-//            }
-//
-//            if ((systemItem.getUrl() == null && systemItem.getType().equals(SystemItemType.FILE))
-//                    || (systemItem.getUrl() != null && systemItem.getType().equals(SystemItemType.FOLDER))) {
-//                throw new UrlException("Wrong size in url");
-//            }
+            if(systemItem.getType().equals(SystemItemType.FILE) && !(systemItem.getSize()>0)){
+                throw new BadRequestException("Validation Failed");
+            }
+            if(systemItem.getType().equals(SystemItemType.FOLDER) && systemItem.getSize()>0){
+                throw new BadRequestException("Validation Failed");
+            }
 
+            if ((systemItem.getUrl() == null && systemItem.getType().equals(SystemItemType.FILE))
+                    || (systemItem.getUrl() != null && systemItem.getType().equals(SystemItemType.FOLDER))) {
+                throw new BadRequestException("Validation Failed");
+            }
+
+            if (systemItem.getParentId() != null) {
+                SystemItem parent = repository.findById(systemItem.getParentId())
+                        .orElseThrow(() -> new ItemNotFoundException("Item not found"));
+
+                if (parent.getType().equals(SystemItemType.FILE)) {
+                    throw new BadRequestException("Validation Failed");
+                }
+               setParentSize(parent, systemItem);
+            }
             repository.save(systemItem);
         }
     }
-
+@Transactional
     public void delete(String id, String date) {
-
-        SystemItem item = repository.findById(id).orElseThrow(() -> new ItemNotFoundException("SystemItem not found"));
+        SystemItem item = repository.findById(id).orElseThrow(() -> new ItemNotFoundException(("Item not found")));
         if (item.getParentId() != null) {
             SystemItem parent = repository.findById(item.getParentId())
-                    .orElseThrow(() -> new ItemNotFoundException("SystemItem not found"));
+                    .orElseThrow(() -> new ItemNotFoundException("Item not found"));
             parent.setDate(date);
             repository.save(parent);
+        }
+        if(!item.getChildren().isEmpty()){
+            List<String> items = item.getChildren()
+                    .stream()
+                    .map(item1 -> item1.getId())
+                    .collect(Collectors.toList());
+            for(String item1:items){
+                repository.delete(repository.findById(item1).get());
+            }
         }
         repository.delete(item);
     }
 
     public SystemItemDto getById(String  id) {
-
         return SystemItemMapper.toSystemItemDto(repository.findById(id)
-                .orElseThrow(() -> new ItemNotFoundException("SystemItem not found")));
+                .orElseThrow(() -> new ItemNotFoundException(("Item not found"))));
     }
 
+
+    private void setParentSize(SystemItem parent, SystemItem item){
+
+        parent.setSize(parent.getSize() + item.getSize());
+        parent.setDate(item.getDate());
+        repository.save(parent);
+        if(parent.getParentId()!= null){
+            SystemItem itemParent = repository.findById(parent.getParentId())
+                    .orElseThrow(() -> new ItemNotFoundException(("Item not found")));
+            setParentSize(itemParent, item);
+        }
+    }
 
     public SystemItemHistoryResponse getByUpdate(Date date) {
         return null;

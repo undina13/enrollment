@@ -13,9 +13,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import ru.undina.enrollment.controller.EnrollmentController;
 
-import java.util.List;
-
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static ru.undina.enrollment.EnrollmentTestData.*;
@@ -27,13 +24,10 @@ import static ru.undina.enrollment.EnrollmentTestData.*;
 public class EnrollmentTest {
     @Autowired
     EnrollmentController controller;
-
-    @Autowired
-    private MockMvc mockMvc;
-
     @Autowired
     ObjectMapper mapper;
-
+    @Autowired
+    private MockMvc mockMvc;
 
     @Test
     @DirtiesContext
@@ -46,11 +40,72 @@ public class EnrollmentTest {
     }
 
     @Test
+    @DirtiesContext
+    void importWrongParentNotFound() throws Exception {
+        mockMvc.perform(
+                MockMvcRequestBuilders.post("/imports")
+                        .content(mapper.writeValueAsString(systemItemImportRequest2))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @DirtiesContext
+    void importWrongParentFile() throws Exception {
+        mockMvc.perform(
+                MockMvcRequestBuilders.post("/imports")
+                        .content(mapper.writeValueAsString(systemItemImportRequest3))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @DirtiesContext
+    void importDoubleId() throws Exception {
+        mockMvc.perform(
+                MockMvcRequestBuilders.post("/imports")
+                        .content(mapper.writeValueAsString(systemItemImportRequest4))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
     void getByIdOk() throws Exception {
         mockMvc.perform(
                 MockMvcRequestBuilders.get("/nodes/item1")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-        . andExpect(content().json(mapper.writeValueAsString(item1)));
+                .andExpect(content().json(mapper.writeValueAsString(item1)));
+    }
+
+
+    @Test
+    void getByIdNotFound() throws Exception {
+        mockMvc.perform(
+                MockMvcRequestBuilders.get("/nodes/1item1")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @DirtiesContext
+    void DeleteOk() throws Exception {
+        mockMvc.perform(
+                MockMvcRequestBuilders.delete("/delete/item1?date=2022-09-13T22:12:01.000Z")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+
+        mockMvc.perform(
+                MockMvcRequestBuilders.get("/nodes/item2")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void DeleteNotFound() throws Exception {
+        mockMvc.perform(
+                MockMvcRequestBuilders.delete("/delete/44item1?date=2022-09-13T22:12:01.000Z")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
     }
 }

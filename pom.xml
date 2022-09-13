@@ -17,6 +17,7 @@
 
 	<properties>
 		<java.version>11</java.version>
+		<springdoc.version>1.6.1</springdoc.version>
 	</properties>
 
 	<dependencies>
@@ -62,6 +63,17 @@
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-validator</artifactId>
 			<version>5.1.0.Final</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springdoc</groupId>
+			<artifactId>springdoc-openapi-ui</artifactId>
+			<version>${springdoc.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springdoc</groupId>
+			<artifactId>springdoc-openapi-data-rest</artifactId>
+			<version>${springdoc.version}</version>
+
 		</dependency>
 	</dependencies>
 	</project>

@@ -84,5 +84,6 @@ public class EnrollmentTestData {
             .build();
 
 
-    public static SystemItemHistoryResponse response1 = new SystemItemHistoryResponse(List.of(SystemItemMapper.toSystemItemHistoryUnit(item3)));
+    public static SystemItemHistoryResponse response1 = new SystemItemHistoryResponse(List
+            .of(SystemItemMapper.toSystemItemHistoryUnit(item3)));
 }

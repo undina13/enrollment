@@ -1,13 +1,21 @@
 package ru.undina.enrollment.mapper;
 
 import lombok.experimental.UtilityClass;
+import org.springframework.format.annotation.DateTimeFormat;
 import ru.undina.enrollment.dto.SystemItemDto;
 import ru.undina.enrollment.dto.SystemItemHistoryUnit;
 import ru.undina.enrollment.dto.SystemItemImport;
 import ru.undina.enrollment.model.SystemItem;
 import ru.undina.enrollment.model.SystemItemType;
 
+import java.sql.Timestamp;
+import java.text.Format;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Formatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -30,7 +38,7 @@ public class SystemItemMapper {
                 .parentId(systemItem.getParentId())
                 .type(systemItem.getType())
                 .size(systemItem.getSize())
-                .date(systemItem.getDate())
+                .date(systemItem.getDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")))
                 .build();
     }
 
@@ -46,13 +54,20 @@ public class SystemItemMapper {
                     .collect(Collectors.toList());
 
         }
+      // Timestamp date = Timestamp.valueOf(systemItem.getDate());
+      //  LocalDateTime dateTime = LocalDateTime.parse(systemItem.getDate());
+       // Date date = Date.from(Instant.parse(systemItem.getDate()));
+     //   String newDate = dateTime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+
+
+
         return SystemItemDto.builder()
                 .id(systemItem.getId())
                 .url(systemItem.getUrl())
                 .parentId(systemItem.getParentId())
                 .type(systemItem.getType())
                 .size(systemItem.getSize())
-                .date(systemItem.getDate())
+                .date(systemItem.getDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")))
                 .children(children)
                 .build();
     }

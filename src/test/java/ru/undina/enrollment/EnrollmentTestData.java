@@ -5,7 +5,9 @@ import ru.undina.enrollment.model.SystemItem;
 import ru.undina.enrollment.model.SystemItemImportRequest;
 import ru.undina.enrollment.model.SystemItemType;
 
-import java.util.ArrayList;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 import java.util.List;
 
 public class EnrollmentTestData {
@@ -59,7 +61,7 @@ public class EnrollmentTestData {
             .url("/file/url15")
             .type(SystemItemType.FILE)
             .size(100)
-            .date("2022-09-10T22:12:01.000Z")
+            .date(LocalDateTime.parse("2022-09-10T22:12:01.000Z", DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")))
             .build();
 
     public static SystemItem item3 = SystemItem.builder()
@@ -68,14 +70,14 @@ public class EnrollmentTestData {
             .url("/file/url15h")
             .type(SystemItemType.FILE)
             .size(100)
-            .date("2022-09-11T00:12:01.000Z")
+            .date(LocalDateTime.parse("2022-09-11T00:12:01.000Z", DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")))
             .build();
 
     public static  SystemItem item1 = SystemItem.builder()
             .id("item1")
             .type(SystemItemType.FOLDER)
             .children(List.of(item2, item3))
-            .date("2022-09-10T21:12:01.000Z")
+            .date(LocalDateTime.parse("2022-09-11T00:12:01.000Z", DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")))
             .build();
 
 }

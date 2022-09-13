@@ -14,6 +14,7 @@ import ru.undina.enrollment.model.SystemItemType;
 import ru.undina.enrollment.repository.EnrollmentRepository;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -42,7 +43,7 @@ public class EnrollmentService {
         }
         for (SystemItemImport itemImport : items) {
             SystemItem systemItem = SystemItemMapper.toSystemItem(itemImport);
-            systemItem.setDate(updateDate);
+            systemItem.setDate(LocalDateTime.parse(updateDate, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")));
 
             if(systemItem.getType().equals(SystemItemType.FILE) && !(systemItem.getSize()>0)){
                 throw new BadRequestException("Validation Failed");
@@ -74,7 +75,7 @@ public class EnrollmentService {
         if (item.getParentId() != null) {
             SystemItem parent = repository.findById(item.getParentId())
                     .orElseThrow(() -> new ItemNotFoundException("Item not found"));
-            parent.setDate(date);
+            parent.setDate(LocalDateTime.parse(date, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")));
             repository.save(parent);
         }
         if(!item.getChildren().isEmpty()){

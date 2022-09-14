@@ -1,0 +1,26 @@
+
+version: '3.8'
+services:
+  db:
+    image: postgres:13.7-alpine
+    volumes:
+      - /var/lib/postgresql/data/
+    environment:
+      - POSTGRES_DB=yandex
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=root
+
+  web:
+    build: .
+    ports:
+      - "8080:8080"
+
+    depends_on:
+      - db
+    # переменные окружения
+    environment:
+      - DB_NAME=yandex
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=root
+      - DB_HOST=db
+      - DB_PORT=5432

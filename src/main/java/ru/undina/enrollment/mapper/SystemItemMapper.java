@@ -5,7 +5,9 @@ import ru.undina.enrollment.dto.SystemItem;
 import ru.undina.enrollment.dto.SystemItemHistoryUnit;
 import ru.undina.enrollment.dto.SystemItemImport;
 import ru.undina.enrollment.model.SystemItemEntity;
+import ru.undina.enrollment.model.SystemItemHistoryEntity;
 import ru.undina.enrollment.model.SystemItemType;
+import ru.undina.enrollment.repository.SystemItemHistoryRepository;
 
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -34,6 +36,17 @@ public class SystemItemMapper {
                 .build();
     }
 
+    public static SystemItemHistoryUnit toSystemItemHistoryUnitHistory(SystemItemHistoryEntity systemItemEntity) {
+        return SystemItemHistoryUnit.builder()
+                .id(systemItemEntity.getItemId())
+                .url(systemItemEntity.getUrl())
+                .parentId(systemItemEntity.getParentId())
+                .type(systemItemEntity.getType())
+                .size(systemItemEntity.getSize())
+                .date(systemItemEntity.getDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")))
+                .build();
+    }
+
     public static SystemItem toSystemItemDto(SystemItemEntity systemItemEntity) {
         List<SystemItem> children;
         if(systemItemEntity.getType().equals(SystemItemType.FILE)){
@@ -46,7 +59,6 @@ public class SystemItemMapper {
                     .collect(Collectors.toList());
 
         }
-
         return SystemItem.builder()
                 .id(systemItemEntity.getId())
                 .url(systemItemEntity.getUrl())
@@ -55,6 +67,17 @@ public class SystemItemMapper {
                 .size(systemItemEntity.getSize())
                 .date(systemItemEntity.getDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")))
                 .children(children)
+                .build();
+    }
+
+    public static SystemItemHistoryEntity toSystemItemHistoryEntity(SystemItemEntity systemItemEntity) {
+        return SystemItemHistoryEntity.builder()
+                .itemId(systemItemEntity.getId())
+                .url(systemItemEntity.getUrl())
+                .parentId(systemItemEntity.getParentId())
+                .type(systemItemEntity.getType())
+                .size(systemItemEntity.getSize())
+                .date(systemItemEntity.getDate())
                 .build();
     }
 }

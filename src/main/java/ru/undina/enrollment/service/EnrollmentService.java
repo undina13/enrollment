@@ -13,7 +13,8 @@ import ru.undina.enrollment.model.SystemItemEntity;
 import ru.undina.enrollment.model.SystemItemHistoryResponse;
 import ru.undina.enrollment.model.SystemItemImportRequest;
 import ru.undina.enrollment.model.SystemItemType;
-import ru.undina.enrollment.repository.EnrollmentRepository;
+import ru.undina.enrollment.repository.SystemItemHistoryRepository;
+import ru.undina.enrollment.repository.SystemItemRepository;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -24,11 +25,13 @@ import java.util.stream.Collectors;
 @Service
 @Transactional(readOnly = true)
 public class EnrollmentService {
-    private final EnrollmentRepository repository;
+    private final SystemItemRepository itemRepository;
+    private final SystemItemHistoryRepository historyRepository;
 
     @Autowired
-    public EnrollmentService(EnrollmentRepository repository) {
-        this.repository = repository;
+    public EnrollmentService(SystemItemRepository itemRepository, SystemItemHistoryRepository historyRepository) {
+        this.itemRepository = itemRepository;
+        this.historyRepository = historyRepository;
     }
 
     @Transactional
@@ -53,31 +56,36 @@ public class EnrollmentService {
             }
 
             if ((systemItemEntity.getUrl() == null && systemItemEntity.getType().equals(SystemItemType.FILE))
-                    || (systemItemEntity.getUrl() != null && systemItemEntity.getType().equals(SystemItemType.FOLDER))) {
+                    || (systemItemEntity.getUrl() != null && systemItemEntity.getType()
+                    .equals(SystemItemType.FOLDER))) {
                 throw new BadRequestException("Validation Failed");
             }
 
             if (systemItemEntity.getParentId() != null) {
-                SystemItemEntity parent = repository.findById(systemItemEntity.getParentId())
+                SystemItemEntity parent = itemRepository.findById(systemItemEntity.getParentId())
                         .orElseThrow(() -> new ItemNotFoundException("Item not found"));
 
                 if (parent.getType().equals(SystemItemType.FILE)) {
                     throw new BadRequestException("Validation Failed");
                 }
+                historyRepository.save(SystemItemMapper.toSystemItemHistoryEntity(parent));
                 setParentSize(parent, systemItemEntity);
             }
-            repository.save(systemItemEntity);
+            itemRepository.save(systemItemEntity);
+            historyRepository.save(SystemItemMapper.toSystemItemHistoryEntity(systemItemEntity));
         }
     }
 
     @Transactional
     public void delete(String id, String date) {
-        SystemItemEntity item = repository.findById(id).orElseThrow(() -> new ItemNotFoundException(("Item not found")));
+        SystemItemEntity item = itemRepository.findById(id)
+                .orElseThrow(() -> new ItemNotFoundException(("Item not found")));
         if (item.getParentId() != null) {
-            SystemItemEntity parent = repository.findById(item.getParentId())
+            SystemItemEntity parent = itemRepository.findById(item.getParentId())
                     .orElseThrow(() -> new ItemNotFoundException("Item not found"));
             parent.setDate(LocalDateTime.parse(date, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")));
-            repository.save(parent);
+            itemRepository.save(parent);
+            historyRepository.save(SystemItemMapper.toSystemItemHistoryEntity(parent));
         }
         if (!item.getChildren().isEmpty()) {
             List<String> items = item.getChildren()
@@ -85,24 +93,32 @@ public class EnrollmentService {
                     .map(item1 -> item1.getId())
                     .collect(Collectors.toList());
             for (String item1 : items) {
-                repository.delete(repository.findById(item1).get());
+                itemRepository.delete(itemRepository.findById(item1).get());
+                historyRepository.deleteAllByItemId(item1);
             }
         }
-        repository.delete(item);
+        itemRepository.delete(item);
+        historyRepository.deleteAllByItemId(item.getId());
     }
 
     public SystemItem getById(String id) {
-        return SystemItemMapper.toSystemItemDto(repository.findById(id)
+        return SystemItemMapper.toSystemItemDto(itemRepository.findById(id)
                 .orElseThrow(() -> new ItemNotFoundException(("Item not found"))));
     }
 
     private void setParentSize(SystemItemEntity parent, SystemItemEntity item) {
-
-        parent.setSize(parent.getSize() + item.getSize());
+        if (item.getSize() != null) {
+            if(parent.getSize()!=null){
+            parent.setSize(parent.getSize() + item.getSize());}
+            else {
+                parent.setSize(item.getSize());
+            }
+        }
         parent.setDate(item.getDate());
-        repository.save(parent);
+        itemRepository.save(parent);
+        historyRepository.save(SystemItemMapper.toSystemItemHistoryEntity(parent));
         if (parent.getParentId() != null) {
-            SystemItemEntity itemParent = repository.findById(parent.getParentId())
+            SystemItemEntity itemParent = itemRepository.findById(parent.getParentId())
                     .orElseThrow(() -> new ItemNotFoundException(("Item not found")));
             setParentSize(itemParent, item);
         }
@@ -111,7 +127,7 @@ public class EnrollmentService {
     public SystemItemHistoryResponse getByUpdate(String date) {
         LocalDateTime end = LocalDateTime.parse(date, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'"));
         LocalDateTime start = end.minusDays(1);
-        List<SystemItemHistoryUnit> listItem = repository.getAllByDateBetween(start, end)
+        List<SystemItemHistoryUnit> listItem = itemRepository.getAllByDateBetween(start, end)
                 .stream()
                 .map(SystemItemMapper::toSystemItemHistoryUnit)
                 .collect(Collectors.toList());
@@ -119,6 +135,16 @@ public class EnrollmentService {
     }
 
     public SystemItemHistoryResponse getHistory(String id, String dateStart, String dateEnd) {
-        return null;
+        LocalDateTime start = LocalDateTime.parse(dateStart, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'"));
+        LocalDateTime end = LocalDateTime.parse(dateEnd, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'"));
+        if (start.isAfter(end)) {
+            throw new BadRequestException("Validation Failed");
+        }
+
+        List<SystemItemHistoryUnit> listItem = historyRepository.findAllByDateGreaterThanEqualAndDateBeforeAndItemId(start, end, id)
+                .stream()
+                .map(SystemItemMapper::toSystemItemHistoryUnitHistory)
+                .collect(Collectors.toList());
+        return new SystemItemHistoryResponse(listItem);
     }
 }

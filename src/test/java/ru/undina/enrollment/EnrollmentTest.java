@@ -12,6 +12,9 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import ru.undina.enrollment.controller.EnrollmentController;
+import ru.undina.enrollment.service.EnrollmentService;
+
+import java.time.LocalDateTime;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -24,6 +27,10 @@ import static ru.undina.enrollment.EnrollmentTestData.*;
 public class EnrollmentTest {
     @Autowired
     EnrollmentController controller;
+
+    @Autowired
+    EnrollmentService service;
+
     @Autowired
     ObjectMapper mapper;
     @Autowired
@@ -116,5 +123,26 @@ public class EnrollmentTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().json(mapper.writeValueAsString(response1)));
+    }
+    @Test
+    void getHistory() throws Exception {
+        service.imports(systemItemImportRequest5);
+
+        mockMvc.perform(
+                MockMvcRequestBuilders.get("/nodes/item2/history?dateStart=2022-09-09T00:10:01Z&dateEnd=2022-09-14T00:10:01Z")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().json("{\n" +
+                        "  \"items\": [\n" +
+                        "    {\n" +
+                        "      \"id\": \"item2\",\n" +
+                        "      \"url\": \"/file/url15\",\n" +
+                        "      \"parentId\": \"item1\",\n" +
+                        "      \"type\": \"FILE\",\n" +
+                        "      \"size\": 100,\n" +
+                        "      \"date\": \"2022-09-10T21:14:01Z\"\n" +
+                        "    }\n" +
+                        "  ]\n" +
+                        "}"));
     }
 }

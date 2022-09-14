@@ -70,17 +70,21 @@ public class EnrollmentController {
             summary = "Получение истории обновлений по элементу за заданный полуинтервал [from, to)",
             description = "История по удаленным элементам недоступна."
     )
-    @GetMapping(value = "/nodes/{id}/history")
+    @GetMapping(value = "/node/{id}/history")
     public SystemItemHistoryResponse getHistory(
             @PathVariable String id,
             @RequestParam(required = false) String dateStart,
             @RequestParam(required = false) String dateEnd) {
+        log.error(dateStart);
+        log.error(dateEnd);
+        log.error(id);
         return service.getHistory(id, dateStart, dateEnd);
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(BadRequestException.class)
     public Error handleBadRequestException(BadRequestException e) {
+        log.error(e.getMessage());
         return new Error(404, e.getMessage());
     }
 

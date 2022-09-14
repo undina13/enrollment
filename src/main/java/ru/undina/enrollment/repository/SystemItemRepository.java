@@ -6,7 +6,7 @@ import ru.undina.enrollment.model.SystemItemEntity;
 import java.time.LocalDateTime;
 import java.util.List;
 
-public interface EnrollmentRepository extends JpaRepository<SystemItemEntity, String> {
+public interface SystemItemRepository extends JpaRepository<SystemItemEntity, String> {
 
     List<SystemItemEntity> getAllByDateBetween(LocalDateTime start, LocalDateTime end);
 }

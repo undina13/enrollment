@@ -1,5 +1,6 @@
 package ru.undina.enrollment;
 
+import ru.undina.enrollment.dto.SystemItemHistoryUnit;
 import ru.undina.enrollment.dto.SystemItemImport;
 import ru.undina.enrollment.mapper.SystemItemMapper;
 import ru.undina.enrollment.model.SystemItemEntity;
@@ -38,6 +39,14 @@ public class EnrollmentTestData {
             .parentId("item2")
             .build();
 
+    public static SystemItemImport systemItemImport5 = SystemItemImport.builder()
+            .id("item2")
+            .parentId("item1")
+            .url("/file/url15")
+            .type(SystemItemType.FILE)
+            .size(100)
+            .build();
+
     public static SystemItemImportRequest systemItemImportRequest1 = SystemItemImportRequest.builder()
             .updateDate(LocalDateTime.of(2022, 9, 10, 21, 12, 1))
             .items(List.of(systemItemImport1, systemItemImport2))
@@ -54,8 +63,13 @@ public class EnrollmentTestData {
             .build();
 
     public static SystemItemImportRequest systemItemImportRequest4 = SystemItemImportRequest.builder()
-            .updateDate(LocalDateTime.of(2022, 9, 10, 21, 14, 1))
+            .updateDate(LocalDateTime.of(2022, 9, 12, 21, 14, 1))
             .items(List.of(systemItemImport4, systemItemImport4))
+            .build();
+
+    public static SystemItemImportRequest systemItemImportRequest5 = SystemItemImportRequest.builder()
+            .updateDate(LocalDateTime.of(2022, 9, 10, 21, 14, 1))
+            .items(List.of(systemItemImport5))
             .build();
 
     public static SystemItemEntity item2 = SystemItemEntity.builder()
@@ -86,4 +100,16 @@ public class EnrollmentTestData {
 
     public static SystemItemHistoryResponse response1 = new SystemItemHistoryResponse(List
             .of(SystemItemMapper.toSystemItemHistoryUnit(item3)));
+
+    public static SystemItemHistoryUnit unit = SystemItemHistoryUnit.builder()
+            .id("item2")
+            .parentId("item1")
+            .url("/file/url15")
+            .type(SystemItemType.FILE)
+            .size(100)
+            .date("2022-09-10T22:12:01Z")
+            .build();
+
+    public static SystemItemHistoryResponse response2 = new SystemItemHistoryResponse(List
+            .of(unit));
 }

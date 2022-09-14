@@ -84,7 +84,7 @@ public class EnrollmentService {
             SystemItemEntity parent = itemRepository.findById(item.getParentId())
                     .orElseThrow(() -> new ItemNotFoundException("Item not found"));
             parent.setDate(LocalDateTime.parse(date, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")));
-            itemRepository.save(parent);
+           itemRepository.save(parent);
             historyRepository.save(SystemItemMapper.toSystemItemHistoryEntity(parent));
         }
         if (!item.getChildren().isEmpty()) {

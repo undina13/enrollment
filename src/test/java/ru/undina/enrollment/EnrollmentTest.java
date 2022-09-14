@@ -14,8 +14,6 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import ru.undina.enrollment.controller.EnrollmentController;
 import ru.undina.enrollment.service.EnrollmentService;
 
-import java.time.LocalDateTime;
-
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static ru.undina.enrollment.EnrollmentTestData.*;
@@ -101,11 +99,6 @@ public class EnrollmentTest {
                 MockMvcRequestBuilders.delete("/delete/item1?date=2022-09-13T22:12:01Z")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
-
-        mockMvc.perform(
-                MockMvcRequestBuilders.get("/nodes/item2")
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNotFound());
     }
 
     @Test
@@ -124,12 +117,14 @@ public class EnrollmentTest {
                 .andExpect(status().isOk())
                 .andExpect(content().json(mapper.writeValueAsString(response1)));
     }
+
     @Test
     void getHistory() throws Exception {
         service.imports(systemItemImportRequest5);
 
         mockMvc.perform(
-                MockMvcRequestBuilders.get("/nodes/item2/history?dateStart=2022-09-09T00:10:01Z&dateEnd=2022-09-14T00:10:01Z")
+                MockMvcRequestBuilders
+                        .get("/node/item2/history?dateStart=2022-09-09T00:10:01Z&dateEnd=2022-09-14T00:10:01Z")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().json("{\n" +

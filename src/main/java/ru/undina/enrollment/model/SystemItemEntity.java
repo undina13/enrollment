@@ -5,20 +5,13 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.Type;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
-import javax.validation.constraints.Max;
 import javax.validation.constraints.NotNull;
 
 import java.io.Serializable;
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 
 @Data
 @Builder
@@ -26,7 +19,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @Entity
 @Table(name = "items")
-public class SystemItem implements Serializable {
+public class SystemItemEntity implements Serializable {
     @Id
     @Column(name = "id", nullable = false)
     private String id;
@@ -54,5 +47,5 @@ public class SystemItem implements Serializable {
  //  @OneToMany(mappedBy = "parentId", fetch = FetchType.LAZY)
    @OneToMany(fetch = FetchType.EAGER, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
    @JoinColumn(name = "parent_id", referencedColumnName = "id")
-    private List<SystemItem> children;
+    private List<SystemItemEntity> children;
 }

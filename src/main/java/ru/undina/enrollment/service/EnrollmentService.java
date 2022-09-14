@@ -3,13 +3,13 @@ package ru.undina.enrollment.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.undina.enrollment.dto.SystemItemDto;
+import ru.undina.enrollment.dto.SystemItem;
 import ru.undina.enrollment.dto.SystemItemHistoryUnit;
 import ru.undina.enrollment.dto.SystemItemImport;
 import ru.undina.enrollment.exception.BadRequestException;
 import ru.undina.enrollment.exception.ItemNotFoundException;
 import ru.undina.enrollment.mapper.SystemItemMapper;
-import ru.undina.enrollment.model.SystemItem;
+import ru.undina.enrollment.model.SystemItemEntity;
 import ru.undina.enrollment.model.SystemItemHistoryResponse;
 import ru.undina.enrollment.model.SystemItemImportRequest;
 import ru.undina.enrollment.model.SystemItemType;
@@ -42,39 +42,39 @@ public class EnrollmentService {
             throw new BadRequestException("Validation Failed");
         }
         for (SystemItemImport itemImport : items) {
-            SystemItem systemItem = SystemItemMapper.toSystemItem(itemImport);
+            SystemItemEntity systemItemEntity = SystemItemMapper.toSystemItem(itemImport);
 
-            systemItem.setDate(updateDate);
-            if (systemItem.getType().equals(SystemItemType.FILE) && !(systemItem.getSize() > 0)) {
+            systemItemEntity.setDate(updateDate);
+            if (systemItemEntity.getType().equals(SystemItemType.FILE) && !(systemItemEntity.getSize() > 0)) {
                 throw new BadRequestException("Validation Failed");
             }
-            if (systemItem.getType().equals(SystemItemType.FOLDER) && systemItem.getSize() > 0) {
-                throw new BadRequestException("Validation Failed");
-            }
-
-            if ((systemItem.getUrl() == null && systemItem.getType().equals(SystemItemType.FILE))
-                    || (systemItem.getUrl() != null && systemItem.getType().equals(SystemItemType.FOLDER))) {
+            if (systemItemEntity.getType().equals(SystemItemType.FOLDER) && systemItemEntity.getSize() > 0) {
                 throw new BadRequestException("Validation Failed");
             }
 
-            if (systemItem.getParentId() != null) {
-                SystemItem parent = repository.findById(systemItem.getParentId())
+            if ((systemItemEntity.getUrl() == null && systemItemEntity.getType().equals(SystemItemType.FILE))
+                    || (systemItemEntity.getUrl() != null && systemItemEntity.getType().equals(SystemItemType.FOLDER))) {
+                throw new BadRequestException("Validation Failed");
+            }
+
+            if (systemItemEntity.getParentId() != null) {
+                SystemItemEntity parent = repository.findById(systemItemEntity.getParentId())
                         .orElseThrow(() -> new ItemNotFoundException("Item not found"));
 
                 if (parent.getType().equals(SystemItemType.FILE)) {
                     throw new BadRequestException("Validation Failed");
                 }
-                setParentSize(parent, systemItem);
+                setParentSize(parent, systemItemEntity);
             }
-            repository.save(systemItem);
+            repository.save(systemItemEntity);
         }
     }
 
     @Transactional
     public void delete(String id, String date) {
-        SystemItem item = repository.findById(id).orElseThrow(() -> new ItemNotFoundException(("Item not found")));
+        SystemItemEntity item = repository.findById(id).orElseThrow(() -> new ItemNotFoundException(("Item not found")));
         if (item.getParentId() != null) {
-            SystemItem parent = repository.findById(item.getParentId())
+            SystemItemEntity parent = repository.findById(item.getParentId())
                     .orElseThrow(() -> new ItemNotFoundException("Item not found"));
             parent.setDate(LocalDateTime.parse(date, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")));
             repository.save(parent);
@@ -91,18 +91,18 @@ public class EnrollmentService {
         repository.delete(item);
     }
 
-    public SystemItemDto getById(String id) {
+    public SystemItem getById(String id) {
         return SystemItemMapper.toSystemItemDto(repository.findById(id)
                 .orElseThrow(() -> new ItemNotFoundException(("Item not found"))));
     }
 
-    private void setParentSize(SystemItem parent, SystemItem item) {
+    private void setParentSize(SystemItemEntity parent, SystemItemEntity item) {
 
         parent.setSize(parent.getSize() + item.getSize());
         parent.setDate(item.getDate());
         repository.save(parent);
         if (parent.getParentId() != null) {
-            SystemItem itemParent = repository.findById(parent.getParentId())
+            SystemItemEntity itemParent = repository.findById(parent.getParentId())
                     .orElseThrow(() -> new ItemNotFoundException(("Item not found")));
             setParentSize(itemParent, item);
         }

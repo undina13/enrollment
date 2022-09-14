@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.undina.enrollment.model.SystemItem;
 import ru.undina.enrollment.model.SystemItemType;
 
 import java.util.List;
@@ -12,7 +11,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class SystemItemDto {
+public class SystemItem {
 
     private String id;
 
@@ -26,5 +25,5 @@ public class SystemItemDto {
 
     private Integer size;
 
-    private List<SystemItemDto> children;
+    private List<SystemItem> children;
 }

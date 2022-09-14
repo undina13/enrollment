@@ -1,28 +1,20 @@
 package ru.undina.enrollment.mapper;
 
 import lombok.experimental.UtilityClass;
-import org.springframework.format.annotation.DateTimeFormat;
-import ru.undina.enrollment.dto.SystemItemDto;
+import ru.undina.enrollment.dto.SystemItem;
 import ru.undina.enrollment.dto.SystemItemHistoryUnit;
 import ru.undina.enrollment.dto.SystemItemImport;
-import ru.undina.enrollment.model.SystemItem;
+import ru.undina.enrollment.model.SystemItemEntity;
 import ru.undina.enrollment.model.SystemItemType;
 
-import java.sql.Timestamp;
-import java.text.Format;
-import java.time.Instant;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Formatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @UtilityClass
 public class SystemItemMapper {
-    public static SystemItem toSystemItem(SystemItemImport systemItemImport) {
-        return SystemItem.builder()
+    public static SystemItemEntity toSystemItem(SystemItemImport systemItemImport) {
+        return SystemItemEntity.builder()
                 .id(systemItemImport.getId())
                 .parentId(systemItemImport.getParentId())
                 .url(systemItemImport.getUrl())
@@ -31,37 +23,37 @@ public class SystemItemMapper {
                 .build();
     }
 
-    public static SystemItemHistoryUnit toSystemItemHistoryUnit(SystemItem systemItem) {
+    public static SystemItemHistoryUnit toSystemItemHistoryUnit(SystemItemEntity systemItemEntity) {
         return SystemItemHistoryUnit.builder()
-                .id(systemItem.getId())
-                .url(systemItem.getUrl())
-                .parentId(systemItem.getParentId())
-                .type(systemItem.getType())
-                .size(systemItem.getSize())
-                .date(systemItem.getDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")))
+                .id(systemItemEntity.getId())
+                .url(systemItemEntity.getUrl())
+                .parentId(systemItemEntity.getParentId())
+                .type(systemItemEntity.getType())
+                .size(systemItemEntity.getSize())
+                .date(systemItemEntity.getDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")))
                 .build();
     }
 
-    public static SystemItemDto toSystemItemDto(SystemItem systemItem) {
-        List<SystemItemDto> children;
-        if(systemItem.getType().equals(SystemItemType.FILE)){
+    public static SystemItem toSystemItemDto(SystemItemEntity systemItemEntity) {
+        List<SystemItem> children;
+        if(systemItemEntity.getType().equals(SystemItemType.FILE)){
             children = null;
         }
         else {
-            List<SystemItem> children1 = systemItem.getChildren();
+            List<SystemItemEntity> children1 = systemItemEntity.getChildren();
              children = children1.stream()
                     .map(SystemItemMapper::toSystemItemDto)
                     .collect(Collectors.toList());
 
         }
 
-        return SystemItemDto.builder()
-                .id(systemItem.getId())
-                .url(systemItem.getUrl())
-                .parentId(systemItem.getParentId())
-                .type(systemItem.getType())
-                .size(systemItem.getSize())
-                .date(systemItem.getDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")))
+        return SystemItem.builder()
+                .id(systemItemEntity.getId())
+                .url(systemItemEntity.getUrl())
+                .parentId(systemItemEntity.getParentId())
+                .type(systemItemEntity.getType())
+                .size(systemItemEntity.getSize())
+                .date(systemItemEntity.getDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")))
                 .children(children)
                 .build();
     }

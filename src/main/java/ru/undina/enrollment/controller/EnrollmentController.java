@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import ru.undina.enrollment.dto.SystemItemDto;
+import ru.undina.enrollment.dto.SystemItem;
 import ru.undina.enrollment.exception.BadRequestException;
 import ru.undina.enrollment.exception.ItemNotFoundException;
 import ru.undina.enrollment.model.Error;
@@ -33,7 +33,7 @@ public class EnrollmentController {
                     "        Порядок элементов в запросе является произвольным."
     )
     @PostMapping("/imports")
-    public void imports(@RequestBody @Valid SystemItemImportRequest itemImportRequest) {
+    public void imports(@RequestBody @Valid  SystemItemImportRequest itemImportRequest) {
         log.info("create itemImportRequest");
         service.imports(itemImportRequest);
     }
@@ -53,7 +53,7 @@ public class EnrollmentController {
             description = "При получении информации о папке также предоставляется информация о её дочерних элементах"
     )
     @GetMapping(value = "/nodes/{id}")
-    public SystemItemDto getSystemItemDto(@PathVariable String id) {
+    public SystemItem getSystemItemDto(@PathVariable String id) {
         return service.getById(id);
     }
 

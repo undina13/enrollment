@@ -2,7 +2,7 @@ package ru.undina.enrollment;
 
 import ru.undina.enrollment.dto.SystemItemImport;
 import ru.undina.enrollment.mapper.SystemItemMapper;
-import ru.undina.enrollment.model.SystemItem;
+import ru.undina.enrollment.model.SystemItemEntity;
 import ru.undina.enrollment.model.SystemItemHistoryResponse;
 import ru.undina.enrollment.model.SystemItemImportRequest;
 import ru.undina.enrollment.model.SystemItemType;
@@ -58,7 +58,7 @@ public class EnrollmentTestData {
             .items(List.of(systemItemImport4, systemItemImport4))
             .build();
 
-    public static SystemItem item2 = SystemItem.builder()
+    public static SystemItemEntity item2 = SystemItemEntity.builder()
             .id("item2")
             .parentId("item1")
             .url("/file/url15")
@@ -67,7 +67,7 @@ public class EnrollmentTestData {
             .date(LocalDateTime.parse("2022-09-10 22:12:01", DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
             .build();
 
-    public static SystemItem item3 = SystemItem.builder()
+    public static SystemItemEntity item3 = SystemItemEntity.builder()
             .id("item3")
             .parentId("item1")
             .url("/file/url15h")
@@ -76,7 +76,7 @@ public class EnrollmentTestData {
             .date(LocalDateTime.parse("2022-09-11 00:12:01", DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
             .build();
 
-    public static SystemItem item1 = SystemItem.builder()
+    public static SystemItemEntity item1 = SystemItemEntity.builder()
             .id("item1")
             .type(SystemItemType.FOLDER)
             .children(List.of(item2, item3))

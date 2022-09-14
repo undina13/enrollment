@@ -14,6 +14,7 @@ import ru.undina.enrollment.model.SystemItemImportRequest;
 import ru.undina.enrollment.service.EnrollmentService;
 
 import javax.validation.Valid;
+import java.time.format.DateTimeParseException;
 
 @RestController
 @RequestMapping()
@@ -87,6 +88,8 @@ public class EnrollmentController {
         log.error(e.getMessage());
         return new Error(404, e.getMessage());
     }
+
+
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(ItemNotFoundException.class)

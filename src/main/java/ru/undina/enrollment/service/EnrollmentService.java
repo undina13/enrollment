@@ -83,14 +83,18 @@ public class EnrollmentService {
         if (item.getParentId() != null) {
             SystemItemEntity parent = itemRepository.findById(item.getParentId())
                     .orElseThrow(() -> new ItemNotFoundException("Item not found"));
-            parent.setDate(LocalDateTime.parse(date, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")));
-           itemRepository.save(parent);
+            try {
+                parent.setDate(LocalDateTime.parse(date, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'")));
+            } catch (Exception e) {
+                throw new BadRequestException("Validation Failed");
+            }
+            itemRepository.save(parent);
             historyRepository.save(SystemItemMapper.toSystemItemHistoryEntity(parent));
         }
         if (!item.getChildren().isEmpty()) {
             List<String> items = item.getChildren()
                     .stream()
-                    .map(item1 -> item1.getId())
+                    .map(SystemItemEntity::getId)
                     .collect(Collectors.toList());
             for (String item1 : items) {
                 itemRepository.delete(itemRepository.findById(item1).get());
@@ -108,9 +112,9 @@ public class EnrollmentService {
 
     private void setParentSize(SystemItemEntity parent, SystemItemEntity item) {
         if (item.getSize() != null) {
-            if(parent.getSize()!=null){
-            parent.setSize(parent.getSize() + item.getSize());}
-            else {
+            if (parent.getSize() != null) {
+                parent.setSize(parent.getSize() + item.getSize());
+            } else {
                 parent.setSize(item.getSize());
             }
         }
@@ -125,7 +129,12 @@ public class EnrollmentService {
     }
 
     public SystemItemHistoryResponse getByUpdate(String date) {
-        LocalDateTime end = LocalDateTime.parse(date, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'"));
+        LocalDateTime end;
+        try {
+            end = LocalDateTime.parse(date, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'"));
+        } catch (Exception e) {
+            throw new BadRequestException("Validation Failed");
+        }
         LocalDateTime start = end.minusDays(1);
         List<SystemItemHistoryUnit> listItem = itemRepository.getAllByDateBetween(start, end)
                 .stream()
@@ -135,13 +144,22 @@ public class EnrollmentService {
     }
 
     public SystemItemHistoryResponse getHistory(String id, String dateStart, String dateEnd) {
-        LocalDateTime start = LocalDateTime.parse(dateStart, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'"));
-        LocalDateTime end = LocalDateTime.parse(dateEnd, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'"));
+        LocalDateTime start;
+        LocalDateTime end;
+        try {
+            start = LocalDateTime
+                    .parse(dateStart, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'"));
+            end = LocalDateTime.parse(dateEnd, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'"));
+
+        } catch (Exception e) {
+            throw new BadRequestException("Validation Failed");
+        }
         if (start.isAfter(end)) {
             throw new BadRequestException("Validation Failed");
         }
 
-        List<SystemItemHistoryUnit> listItem = historyRepository.findAllByDateGreaterThanEqualAndDateBeforeAndItemId(start, end, id)
+        List<SystemItemHistoryUnit> listItem = historyRepository
+                .findAllByDateGreaterThanEqualAndDateBeforeAndItemId(start, end, id)
                 .stream()
                 .map(SystemItemMapper::toSystemItemHistoryUnitHistory)
                 .collect(Collectors.toList());

@@ -119,9 +119,17 @@ public class EnrollmentTest {
     }
 
     @Test
+    void getUpdatesWrongData() throws Exception {
+        mockMvc.perform(
+                MockMvcRequestBuilders.get("/updates?date=gfdhgd")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
+
+
+    @Test
     void getHistory() throws Exception {
         service.imports(systemItemImportRequest5);
-
         mockMvc.perform(
                 MockMvcRequestBuilders
                         .get("/node/item2/history?dateStart=2022-09-09T00:10:01Z&dateEnd=2022-09-14T00:10:01Z")
@@ -140,4 +148,15 @@ public class EnrollmentTest {
                         "  ]\n" +
                         "}"));
     }
+
+    @Test
+    void getHistoryWrongData() throws Exception {
+        service.imports(systemItemImportRequest5);
+        mockMvc.perform(
+                MockMvcRequestBuilders
+                        .get("/node/item2/history?dateStart=hghh-09T00:10:01Z&dateEnd=2022-09-14T00:10:01Z")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
+
 }

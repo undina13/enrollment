@@ -1,5 +1,5 @@
-DELETE
-FROM PUBLIC.ITEMS;
+ DELETE FROM PUBLIC.ITEMS;
+
 
 INSERT INTO PUBLIC.ITEMS (id, date, parent_id, url, type, size)
 VALUES ('item1', '2022-09-10 21:12:01.00', null, null, 'FOLDER', null);

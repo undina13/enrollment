@@ -1,26 +1,25 @@
-
 version: '3.8'
 services:
+  api:
+    build: ./
+    restart: always
+    ports:
+      - "80:8080"
+    depends_on:
+      - db
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/yandex
+      - POSTGRES_DB=yandex
+      - POSTGRES_USER=root
+
   db:
     image: postgres:13.7-alpine
+    container_name: db
     volumes:
       - /var/lib/postgresql/data/
+    ports:
+      - "5432:5432"
     environment:
       - POSTGRES_DB=yandex
       - POSTGRES_USER=root
       - POSTGRES_PASSWORD=root
-
-  web:
-    build: .
-    ports:
-      - "8080:8080"
-
-    depends_on:
-      - db
-    # переменные окружения
-    environment:
-      - DB_NAME=yandex
-      - POSTGRES_USER=root
-      - POSTGRES_PASSWORD=root
-      - DB_HOST=db
-      - DB_PORT=5432

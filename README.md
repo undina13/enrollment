@@ -8,7 +8,7 @@ mvn clean package
 
 ## API documentation by Swagger 
 
-http://localhost:8080/swagger-ui.html
+https://addresses-2005.usr.yandex-academy.ru/swagger-ui/index.html
 
 
 
